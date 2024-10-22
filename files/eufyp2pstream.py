@@ -262,17 +262,17 @@ class Connector:
         self,
         run_event,
     ):
-        video_sock.bind(("0.0.0.0", 63336))
+        video_sock.bind(("0.0.0.0", 63330))
         video_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         video_sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         video_sock.settimeout(1) # timeout for listening
         video_sock.listen()
-        audio_sock.bind(("0.0.0.0", 63337))
+        audio_sock.bind(("0.0.0.0", 63331))
         audio_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         audio_sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         audio_sock.settimeout(1) # timeout for listening
         audio_sock.listen()
-        backchannel_sock.bind(("0.0.0.0", 63338))
+        backchannel_sock.bind(("0.0.0.0", 63332))
         backchannel_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         backchannel_sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         backchannel_sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
@@ -327,8 +327,7 @@ class Connector:
             if message_id == START_LISTENING_MESSAGE["messageId"]:
                 message_result = payload[message_type]
                 states = message_result["state"]
-                for state in states["devices"]:
-                    self.serialno = state["serialNumber"]
+                self.serialno = states["devices"][0]["serialNumber"]
                 self.video_thread = ClientAcceptThread(video_sock, run_event, "Video", self.ws, self.serialno)
                 self.audio_thread = ClientAcceptThread(audio_sock, run_event, "Audio", self.ws, self.serialno)
                 self.backchannel_thread = ClientAcceptThread(backchannel_sock, run_event, "BackChannel", self.ws, self.serialno)
